@@ -6,6 +6,7 @@ See the file LICENSE for details.
 
 #include "console.h"
 #include "graphics.h"
+#include "font.h"
 
 static int xsize=80;
 static int ysize=25;
@@ -14,7 +15,7 @@ static int xpos=0;
 static int ypos=0;
 
 struct graphics_color bgcolor = {0,0,0};
-struct graphics_color fgcolor = {255,0,0};
+struct graphics_color fgcolor = {255,255,255};
 
 static void console_reset()
 {
@@ -24,16 +25,16 @@ static void console_reset()
 
 static void console_writechar( int x, int y, char ch )
 {
-	graphics_char(x*8,y*8,ch,fgcolor,bgcolor);
+	graphics_char(x*FONT_WIDTH,y*FONT_HEIGHT,ch,fgcolor,bgcolor);
 }
 
 void console_heartbeat()
 {
 	static int onoff=0;
 	if(onoff) {
-		graphics_char(xpos*8,ypos*8,'_',fgcolor,bgcolor);
+		graphics_char(xpos*FONT_WIDTH,ypos*FONT_HEIGHT,'_',fgcolor,bgcolor);
 	} else {
-		graphics_char(xpos*8,ypos*8,'_',bgcolor,bgcolor);
+		graphics_char(xpos*FONT_WIDTH,ypos*FONT_HEIGHT,'_',bgcolor,bgcolor);
 	}
 	onoff = !onoff;
 }
@@ -98,8 +99,8 @@ int console_write( int unit, const void *buffer, int length, int offset )
 
 void console_init()
 {
-	xsize = graphics_width()/8;
-	ysize = graphics_height()/8;
+	xsize = graphics_width()/FONT_WIDTH;
+	ysize = graphics_height()/FONT_HEIGHT;
 	console_reset();
 	console_putstring("\nconsole: initialized\n");
 }

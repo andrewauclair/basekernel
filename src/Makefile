@@ -4,7 +4,10 @@ KERNEL_CCFLAGS=-Wall -c -ffreestanding -m32 -march=i386
 KERNEL_LDFLAGS=-m elf_i386
 
 all: basekernel.img
-
+	mkdir -p tmp/deploy
+	cp basekernel.img tmp/deploy
+	mkisofs -U -b basekernel.img -hide basekernel.img -V "BaseKernel" -iso-level 3 -o tmp/basekernel.iso tmp/deploy
+	
 basekernel.img: bootblock kernel
 	cat bootblock kernel > basekernel.img
 	truncate basekernel.img --size 1474560

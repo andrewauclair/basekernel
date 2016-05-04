@@ -69,6 +69,6 @@ void graphics_bitmap( int x, int y, int width, int height, uint8_t *data, struct
 
 void graphics_char( int x, int y, char ch, struct graphics_color fgcolor, struct graphics_color bgcolor )
 {
-	int u = ((int)ch)*FONT_WIDTH*FONT_HEIGHT/8;
+	int u = ((int)ch)*FONT_WIDTH*(FONT_HEIGHT/8);
 	return graphics_bitmap(x,y,FONT_WIDTH,FONT_HEIGHT,&fontdata[u],fgcolor,bgcolor);
 }
