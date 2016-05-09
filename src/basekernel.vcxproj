@@ -134,6 +134,30 @@
     <None Include="kernelcore.S" />
     <None Include="syscall.S" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ascii.h" />
+    <ClInclude Include="ata.h" />
+    <ClInclude Include="clock.h" />
+    <ClInclude Include="console.h" />
+    <ClInclude Include="font.h" />
+    <ClInclude Include="graphics.h" />
+    <ClInclude Include="interrupt.h" />
+    <ClInclude Include="ioports.h" />
+    <ClInclude Include="kernelcore.h" />
+    <ClInclude Include="kerneltypes.h" />
+    <ClInclude Include="keyboard.h" />
+    <ClInclude Include="list.h" />
+    <ClInclude Include="memory.h" />
+    <ClInclude Include="memorylayout.h" />
+    <ClInclude Include="mutex.h" />
+    <ClInclude Include="pagetable.h" />
+    <ClInclude Include="pic.h" />
+    <ClInclude Include="process.h" />
+    <ClInclude Include="rtc.h" />
+    <ClInclude Include="string.h" />
+    <ClInclude Include="syscall.h" />
+    <ClInclude Include="x86.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
