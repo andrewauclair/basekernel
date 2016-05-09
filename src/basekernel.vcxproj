@@ -110,6 +110,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ata.c" />
+    <ClCompile Include="clock.c" />
+    <ClCompile Include="console.c" />
+    <ClCompile Include="font.c" />
+    <ClCompile Include="graphics.c" />
+    <ClCompile Include="interrupt.c" />
+    <ClCompile Include="keyboard.c" />
+    <ClCompile Include="keymap.us.c" />
+    <ClCompile Include="list.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="memory.c" />
+    <ClCompile Include="mutex.c" />
+    <ClCompile Include="pagetable.c" />
+    <ClCompile Include="pic.c" />
+    <ClCompile Include="process.c" />
+    <ClCompile Include="rtc.c" />
+    <ClCompile Include="string.c" />
+    <ClCompile Include="syscall_handler.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bootblock.S" />
+    <None Include="kernelcore.S" />
+    <None Include="syscall.S" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

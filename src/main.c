@@ -17,6 +17,7 @@ See the file LICENSE for details.
 #include "syscall.h"
 #include "rtc.h"
 #include "kernelcore.h"
+#include "memorylayout.h"
 
 /*
 This is the C initialization point of the kernel.
@@ -27,6 +28,7 @@ Now we initialize each subsystem in the proper order:
 
 int kernel_main()
 {
+	graphics_alloc_backbuffer();
 	console_init();
 
 	console_printf("video: %d x %d\n",video_xres,video_yres,video_xbytes);
@@ -37,6 +39,7 @@ int kernel_main()
 	rtc_init();
 	clock_init();
 	keyboard_init();
+	graphics_init();
 
 /*
 process_init() is a big step.  This initializes the process table, but also gives us our own process structure, private stack, and enables paging.  Now we can do complex things like wait upon events.
@@ -47,6 +50,22 @@ process_init() is a big step.  This initializes the process table, but also give
 
 	console_printf("\nBASEKERNEL READY:\n");
 
+	struct graphics_color color = { 255, 255, 0 };
+	graphics_line(0, 0, 480, 30, color);
+	graphics_line(480, 30, 500, 360, color);
+	graphics_line(400, 400, 50, 50, color);
+
+	// will create page fault
+	/*uint32_t* memtest = 0x80000000;
+	(*memtest) = 4;
+	
+	console_reset();
+	console_printf("memtest %d\n", *memtest);
+	uint32_t* memtest2 = 0x80001000;
+	(*memtest2) = 8;
+	console_printf("memtest2 %d\n", *memtest2);*/
+
+	//process_dump(current);
 	while(1) console_putchar(keyboard_read());
 
 	return 0;

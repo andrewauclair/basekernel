@@ -10,10 +10,12 @@ See the file LICENSE for details.
 #include "kerneltypes.h"
 #include "string.h"
 
+void console_reset();
 void console_init();
 void console_putchar( char c );
 int  console_write( int unit, const void *buffer, int nblocks, int offset );
 void console_heartbeat();
+void console_scroll(int y);
 
 #define console_printf printf
 

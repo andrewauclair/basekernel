@@ -121,6 +121,19 @@ void	memcpy( void *vd, const void *vs, unsigned length )
 	}
 }
 
+void	memmove(void *vd, const void *vs, unsigned length)
+{
+	char *d = vd;
+	const char *s = vs;
+	while (length) {
+		*d = *s;
+		d++;
+		s++;
+		length--;
+	}
+}
+
+
 static void printf_putchar( char c )
 {
 	console_write(0,&c,1,0);

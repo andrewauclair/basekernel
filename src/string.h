@@ -17,7 +17,8 @@ char * strtok( char *s, const char *delim );
 const char * strchr( const char *s, char ch );
 
 void	memset( void *d, char value, unsigned length );
-void	memcpy( void *d, const void *s, unsigned length );
+void	memcpy(void *d, const void *s, unsigned length);
+void	memmove( void *d, const void *s, unsigned length );
 
 void printf( const char *s, ... );
 

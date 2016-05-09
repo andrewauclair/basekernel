@@ -83,6 +83,7 @@ void * memory_alloc_page( bool zeroit )
 					freemap[i] &= ~cellmask;
 					pagenumber = i*CELL_BITS+j;
 					pageaddr = (pagenumber<<PAGE_BITS)+alloc_memory_start;
+					//console_printf("alloc mem page %d at %d", pagenumber, pageaddr);
 					if(zeroit) memset(pageaddr,0,PAGE_SIZE);
 					pages_free--;
 					return pageaddr;

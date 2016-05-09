@@ -17,7 +17,7 @@ static int ypos=0;
 struct graphics_color bgcolor = {0,0,0};
 struct graphics_color fgcolor = {255,255,255};
 
-static void console_reset()
+void console_reset()
 {
 	xpos = ypos = 0;
 	graphics_clear(bgcolor);
@@ -72,10 +72,16 @@ void console_putchar( char c )
 	}
 
 	if(ypos>=ysize) {
-		console_reset();
+		int scrolly = ysize - (ypos - 1);
+		//console_reset();
+		console_scroll(scrolly);
+		xpos = 0;
+		//ypos -= (ypos - ysize - 1);
 	}
 
 	console_writechar(xpos,ypos,'_');
+	graphics_swap_buffers();
+
 }
 
 void console_putstring( const char *s )
@@ -84,6 +90,8 @@ void console_putstring( const char *s )
 		console_putchar(*s);
 		s++;
 	}
+
+	graphics_swap_buffers();
 }
 
 int console_write( int unit, const void *buffer, int length, int offset )
@@ -94,6 +102,8 @@ int console_write( int unit, const void *buffer, int length, int offset )
 		cbuffer++;
 		length--;
 	}
+	graphics_swap_buffers();
+
 	return 1;
 }
 
@@ -103,4 +113,12 @@ void console_init()
 	ysize = graphics_height()/FONT_HEIGHT;
 	console_reset();
 	console_putstring("\nconsole: initialized\n");
+}
+
+void console_scroll(int y)
+{
+	ypos -= y;
+
+	//console_printf("scroll %d characters", y);
+	graphics_scroll(y * FONT_HEIGHT);
 }

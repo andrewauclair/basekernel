@@ -26,8 +26,11 @@ void pagetable_unmap( struct pagetable *p, unsigned vaddr );
 void pagetable_alloc( struct pagetable *p, unsigned vaddr, unsigned length, int flags );
 void pagetable_delete( struct pagetable *p );
 struct pagetable * pagetable_load( struct pagetable *p );
+
 void pagetable_enable();
 void pagetable_refresh();
+
+static void pagefault_interrupt_handler(int intr, int code);
 
 #endif
 

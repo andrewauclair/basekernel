@@ -8,6 +8,10 @@ See the file LICENSE for details.
 #include "memory.h"
 #include "string.h"
 #include "kernelcore.h"
+#include "process.h"
+#include "interrupt.h"
+#include "console.h"
+#include "graphics.h"
 
 #define ENTRIES_PER_TABLE (PAGE_SIZE/4)
 
@@ -37,8 +41,49 @@ struct pagetable * pagetable_create()
 	return memory_alloc_page(1);
 }
 
+static void pagefault_interrupt_handler(int intr, int code)
+{
+	unsigned vaddr, paddr;
+
+	//console_printf("Page Fault! %x %x\n", intr, code);
+	
+	asm("mov %%cr2, %0" : "=r" (vaddr));
+	/*console_printf("Present: %d\n", vaddr & 0x4);
+	console_printf("Read/Write: %d\n", vaddr & 0x2);
+	console_printf("User/Supervisor: %d\n", vaddr & 0x1);
+*/
+	if (pagetable_getmap(current->pagetable, vaddr, &paddr))
+	{
+		console_printf("interrupt: illegal page acess at vaddr %x\n", vaddr);
+		process_dump(current);
+		halt();
+		process_exit(0);
+	}
+	else
+	{
+		//console_printf("page fault at vaddr %x and paddr %x\n", vaddr, paddr);
+		//console_printf("alloc new page at %x\n", vaddr);
+		int flags = 0;
+
+		if (code & 0x2) flags |= PAGE_FLAG_READWRITE;
+
+		if (code & 0x4)
+		{
+			flags |= PAGE_FLAG_USER;
+		}
+		else
+		{
+			flags |= PAGE_FLAG_KERNEL;
+		}
+		pagetable_map(current->pagetable, vaddr, paddr, flags);
+	}
+}
+
 void pagetable_init( struct pagetable *p )
 {
+	interrupt_register(14, pagefault_interrupt_handler);
+	interrupt_enable(14);
+
 	unsigned i,stop;
 	stop = total_memory*1024*1024;
 	for(i=0;i<stop;i+=PAGE_SIZE) {
@@ -47,6 +92,14 @@ void pagetable_init( struct pagetable *p )
 	stop = (unsigned)video_buffer+video_xres*video_yres*3;
 	for(i=(unsigned)video_buffer;i<=stop;i+=PAGE_SIZE) {
 		pagetable_map(p,i,i,PAGE_FLAG_KERNEL|PAGE_FLAG_READWRITE);
+	}
+	// back buffer
+	stop += PAGE_SIZE;
+	back_buffer = stop;
+	unsigned bbstop = stop + (video_xres * video_yres * 3);
+	for (i = stop; i <= bbstop; i += PAGE_SIZE)
+	{
+		pagetable_map(p, i, i, PAGE_FLAG_KERNEL | PAGE_FLAG_READWRITE);
 	}
 }
 
@@ -173,7 +226,8 @@ void pagetable_alloc( struct pagetable *p, unsigned vaddr, unsigned length, int 
 	while(npages>0) {
 		unsigned paddr;
 		if(!pagetable_getmap(p,vaddr,&paddr)) {
-			pagetable_map(p,vaddr,0,flags|PAGE_FLAG_ALLOC);
+			//pagetable_map(p,vaddr,0,flags|PAGE_FLAG_ALLOC);
+			pagetable_map(p, vaddr, paddr, flags | PAGE_FLAG_ALLOC);
 		}
 		vaddr += PAGE_SIZE;
 		npages--;

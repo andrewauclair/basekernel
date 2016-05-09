@@ -9,6 +9,7 @@ See the file LICENSE for details.
 #include "pic.h"
 #include "process.h"
 #include "kernelcore.h"
+#include "memory.h"
 
 static interrupt_handler_t interrupt_handler_table[48];
 static uint32_t interrupt_count[48];
@@ -36,25 +37,9 @@ static const char * exception_names[] = {
 
 static void unknown_exception( int i, int code )
 {
-	unsigned vaddr, paddr;
-
-	if(i==14) {
-		asm("mov %%cr2, %0" : "=r" (vaddr) );
-		if(pagetable_getmap(current->pagetable,vaddr,&paddr)) {
-			console_printf("interrupt: illegal page access at vaddr %x\n",vaddr);
-			process_dump(current);
-			process_exit(0);
-		} else {
-			printf("interrupt: page fault at %x\n",vaddr);
-			printf("please write a fault handler in interrupt.c!\n");
-			printf("kernel halted.\n");
-			halt();
-		}
-	} else {
-		console_printf("interrupt: exception %d: %s (code %x)\n",i,exception_names[i],code);
-		process_dump(current);
-	}
-
+	console_printf("interrupt: exception %d: %s (code %x)\n",i,exception_names[i],code);
+	process_dump(current);
+	
 	if(current) {
 		process_exit(0);
 	} else {
