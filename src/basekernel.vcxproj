@@ -112,14 +112,17 @@
   <ItemGroup>
     <ClCompile Include="ata.c" />
     <ClCompile Include="clock.c" />
+    <ClCompile Include="commands.c" />
     <ClCompile Include="console.c" />
     <ClCompile Include="font.c" />
     <ClCompile Include="graphics.c" />
     <ClCompile Include="interrupt.c" />
+    <ClCompile Include="iso.c" />
     <ClCompile Include="keyboard.c" />
     <ClCompile Include="keymap.us.c" />
     <ClCompile Include="list.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="mbr.c" />
     <ClCompile Include="memory.c" />
     <ClCompile Include="mutex.c" />
     <ClCompile Include="pagetable.c" />
@@ -132,21 +135,25 @@
   <ItemGroup>
     <None Include="bootblock.S" />
     <None Include="kernelcore.S" />
+    <None Include="mbr.S" />
     <None Include="syscall.S" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ascii.h" />
     <ClInclude Include="ata.h" />
     <ClInclude Include="clock.h" />
+    <ClInclude Include="commands.h" />
     <ClInclude Include="console.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="interrupt.h" />
     <ClInclude Include="ioports.h" />
+    <ClInclude Include="iso.h" />
     <ClInclude Include="kernelcore.h" />
     <ClInclude Include="kerneltypes.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="list.h" />
+    <ClInclude Include="mbr.h" />
     <ClInclude Include="memory.h" />
     <ClInclude Include="memorylayout.h" />
     <ClInclude Include="mutex.h" />

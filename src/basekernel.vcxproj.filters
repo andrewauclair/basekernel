@@ -69,6 +69,15 @@
     <ClCompile Include="syscall_handler.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mbr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="iso.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commands.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="bootblock.S">
@@ -78,6 +87,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="syscall.S">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="mbr.S">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -146,6 +158,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="x86.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mbr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iso.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

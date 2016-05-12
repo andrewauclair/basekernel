@@ -14,6 +14,8 @@ static int ysize=25;
 static int xpos=0;
 static int ypos=0;
 
+static char command_line[81];
+
 struct graphics_color bgcolor = {0,0,0};
 struct graphics_color fgcolor = {255,255,255};
 
@@ -48,6 +50,10 @@ void console_putchar( char c )
 		case 10:
 			xpos=0;
 			ypos++;
+			for (int i = 0; i < xsize; ++i)
+			{
+				command_line[i] = ' ';
+			}
 			break;
 		case '\f':
 			console_reset();
@@ -56,6 +62,7 @@ void console_putchar( char c )
 			xpos--;
 			break;
 		default:
+			command_line[xpos] = c;
 			console_writechar(xpos,ypos,c);
 			xpos++;
 			break;

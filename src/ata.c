@@ -68,11 +68,20 @@ See the file LICENSE for details.
 #define ATAPI_DRIVE 6
 #define ATAPI_BLOCKSIZE 2048
 
-#define SCSI_READ10            0x28
+#define SCSI_READ10            0xA8
 #define SCSI_SENSE             0x03
 
 #define ATA_CONTROL_RESET	0x04
 #define ATA_CONTROL_DISABLEINT	0x02
+
+#define ATA_ER_BBK      0x80    // Bad sector
+#define ATA_ER_UNC      0x40    // Uncorrectable data
+#define ATA_ER_MC       0x20    // No media
+#define ATA_ER_IDNF     0x10    // ID mark not found
+#define ATA_ER_MCR      0x08    // No media
+#define ATA_ER_ABRT     0x04    // Command aborted
+#define ATA_ER_TK0NF    0x02    // Track 0 not found
+#define ATA_ER_AMNF     0x01    // No address mark
 
 static const int ata_base[4] = {ATA_BASE0,ATA_BASE0,ATA_BASE1,ATA_BASE1};
 static int ata_interrupt_active = 0;
@@ -106,7 +115,8 @@ static int ata_wait( int id, int mask, int state )
 			return 1;
 		}
 		if(t&ATA_STATUS_ERR) {
-			console_printf("ata: error\n");
+			t = inb(ata_base[id] + ATA_ERROR);
+			console_printf("ata: error %d\n", t);
 			ata_reset(id);
 			return 0;
 		}
@@ -271,6 +281,19 @@ static int atapi_read_unlocked( int id, void *buffer, int nblocks, int offset )
 	packet[10] = 0;
 	packet[11] = 0;
 
+	packet[0] = SCSI_READ10;
+	packet[1] = 0;
+	packet[2] = (offset >> 24) & 0xFF;
+	packet[3] = (offset >> 16) & 0xFF;
+	packet[4] = (offset >> 8) & 0xFF;
+	packet[5] = (offset >> 0) & 0xFF;
+	packet[6] = 0;
+	packet[7] = 0;// nblocks >> 8;
+	packet[8] = 0;// nblocks >> 0;
+	packet[9] = nblocks;
+	packet[10] = 0;
+	packet[11] = 0;
+	
 	if(!atapi_begin(id,packet,length)) return 0;
 
 	if(ata_interrupt_active) process_wait(&queue);
