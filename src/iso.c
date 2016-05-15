@@ -1,6 +1,7 @@
 #include "kerneltypes.h"
 #include "ata.h"
 #include "console.h"
+#include "iso.h"
 
 void iso_read_disc(int drive)
 {
@@ -62,7 +63,7 @@ void iso_read_disc(int drive)
 		iso_read_bootrecord(cbuffer);
 		break;
 	case 1:
-		iso_read_primaryvolume(cbuffer);
+		iso_read_primaryvolume(drive, cbuffer);
 		break;
 	case 2:
 		iso_read_suppvolume(cbuffer);
@@ -76,7 +77,9 @@ void iso_read_disc(int drive)
 
 
 
+	memset(cbuffer, 0, 1024);
 
+	atapi_read(drive, cbuffer, 1, 21);
 
 	int j = 0;
 	int k = 0;
@@ -96,7 +99,7 @@ void iso_read_bootrecord(char* buffer)
 	// read boot identier, offset 39, length 32
 }
 
-void iso_read_primaryvolume(char* buffer)
+void iso_read_primaryvolume(int drive, char* buffer)
 {
 	//uint32_t year = buffer[813];
 	
@@ -118,6 +121,26 @@ void iso_read_primaryvolume(char* buffer)
 	uint32_t pathTableSize = buffer[132];
 	console_printf("Path Table Size: %d\n", pathTableSize);
 
+	uint32_t typeLPathTable = buffer[140];
+	console_printf("Type L Path Table: %d\n", typeLPathTable);
+	
+	uint32_t typeMPathTable = buffer[148];
+	console_printf("Type M Path Table: %d\n", typeMPathTable);
+
+	uint32_t typeMOptPathTable = buffer[152];
+	console_printf("Type M Optional Path Table: %d\n", typeMOptPathTable);
+	
+	// read directory entry for root directory
+	char rootDirLen = buffer[156];
+	char earlen = buffer[157];
+	uint32_t extLBA = iso_read_uint32(buffer + 158);
+	uint32_t dataLength = iso_read_uint32(buffer + 166);
+
+	console_printf("Root Directory Length: %d\n", rootDirLen);
+	console_printf("Extended Attribute Record Length: %d\n", earlen);
+	console_printf("LBA of extent: %d\n", extLBA);
+	console_printf("Data Length: %d\n", dataLength);
+
 	console_printf("creation date: ");
 	iso_read_datetime_format(buffer, 813);
 	console_printf("modified date: ");
@@ -126,6 +149,10 @@ void iso_read_primaryvolume(char* buffer)
 	iso_read_datetime_format(buffer, 847);
 	console_printf("effective date: ");
 	iso_read_datetime_format(buffer, 864);
+
+	// read l path table
+	iso_read_lpath(drive, typeLPathTable);
+	//iso_read_directory(drive, extLBA);
 }
 
 void iso_read_suppvolume(char* buffer)
@@ -192,4 +219,68 @@ void iso_read_datetime_format(char* buffer, int offset)
 	uint8_t gmtOffset = buffer[index];
 
 	console_printf("%s-%s-%s %s:%s:%s.%s\n", year, month, day, hour, minute, second, hundsec);
+}
+
+void iso_read_lpath(int drive, int lba)
+{
+	console_printf("Path Table at %d\n", lba);
+
+	uint16_t data[1024];
+	char* cbuffer = (char*)data;
+
+	memset(cbuffer, 0, 1024);
+
+	atapi_read(drive, cbuffer, 1, lba);
+
+	unsigned char len = cbuffer[0];
+	unsigned char earlen = cbuffer[1];
+	uint32_t extlba = iso_read_uint32(cbuffer + 2);
+	uint16_t numparents = iso_read_uint16(cbuffer + 6);
+	char name = cbuffer[8];
+
+	console_printf("Length: %d\n", len);
+	console_printf("Extended Attribute Record Length: %d\n", earlen);
+	console_printf("LBA: %d\n", extlba);
+	console_printf("Directory Number of Parent Directory: %d\n", numparents);
+	console_printf("Directory ID: %s\n", name);
+}
+
+void iso_read_directory(int drive, int lba)
+{
+	console_printf("Directory Record at %d\n", lba);
+	uint16_t data[1024];
+	char* cbuffer = (char*)data;
+
+	memset(cbuffer, 0, 1024);
+
+	atapi_read(drive, cbuffer, 1, lba);
+
+	unsigned char len = cbuffer[0];
+	unsigned char earlen = cbuffer[1];
+	uint32_t extlba = iso_read_uint32(cbuffer + 2);
+	uint32_t datalen = iso_read_uint32(cbuffer + 10);
+	unsigned char flags = cbuffer[25];
+	unsigned char unitsize = cbuffer[26];
+	unsigned char gapsize = cbuffer[27];
+
+	console_printf("Length: %d\n", len);
+	console_printf("Extended Attribute Record Length: %d\n", earlen);
+	console_printf("LBA: %d\n", extlba);
+	console_printf("Data Length: %d\n", datalen);
+	console_printf("flags: %x\n", flags);
+	console_printf("Unit Size: %d\n", unitsize);
+	console_printf("Gap Size: %d\n", gapsize);
+}
+
+uint32_t iso_read_uint32(char* buffer)
+{
+	return *(buffer + 3) << 24 |
+		*(buffer + 2) << 16 |
+		*(buffer + 1) << 8 |
+		(*buffer);
+}
+
+uint16_t iso_read_uint16(char* buffer)
+{
+	return *(buffer + 1) << 8 | (*buffer);
 }

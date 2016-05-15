@@ -146,6 +146,7 @@
     <ClInclude Include="console.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="icon.h" />
     <ClInclude Include="interrupt.h" />
     <ClInclude Include="ioports.h" />
     <ClInclude Include="iso.h" />

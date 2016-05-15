@@ -25,6 +25,7 @@ void graphics_char( int x, int y, char ch, struct graphics_color fgcolor, struct
 void graphics_scroll(int y);
 void graphics_line(int x1, int y1, int x2, int y2, struct graphics_color color);
 void graphics_circle(int x, int y, int r, struct graphics_color color);
+void graphics_bitmap(int x, int y, int width, int height, uint8_t *data, struct graphics_color fgcolor, struct graphics_color bgcolor);
 
 void graphics_interrupt_handler(int intr, int code);
 void graphics_init();

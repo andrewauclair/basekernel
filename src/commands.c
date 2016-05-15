@@ -2,6 +2,9 @@
 #include "string.h"
 #include "iso.h"
 #include "console.h"
+#include "memory.h"
+#include "graphics.h"
+#include "icon.h"
 
 void commands_loop()
 {
@@ -18,6 +21,9 @@ void commands_loop()
 			// execute command
 			input[index] = '\0';
 			commands_run(input);
+
+			memset(input, 0, 256);
+			index = 0;
 		}
 		else
 		{
@@ -35,6 +41,10 @@ void commands_run(char* cmd)
 	}
 	else if (strcmp(cmd, "memory") == 0)
 	{
-
+		console_printf("pages free: %d\npages total: %d\n", memory_pages_free(), memory_pages_total());
+	}
+	else if (strcmp(cmd, "clear") == 0)
+	{
+		console_reset();
 	}
 }

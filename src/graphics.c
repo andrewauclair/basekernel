@@ -25,9 +25,9 @@ int graphics_height()
 	return video_yres;
 }
 
-static inline void plot_pixel( int x, int y, struct graphics_color c )
+static inline void plot_pixel(int x, int y, struct graphics_color c)
 {
-	uint8_t *v = video_buffer + video_xbytes*y+x*3;
+	uint8_t *v = video_buffer + video_xbytes*y + x * 3;
 	//uint8_t* v = back_buffer + video_xbytes * y + x * 3;
 	v[2] = c.r;
 	v[1] = c.g;

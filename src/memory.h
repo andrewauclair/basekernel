@@ -12,5 +12,7 @@ See the file LICENSE for details.
 void	memory_init();
 void *	memory_alloc_page( bool zeroit );
 void	memory_free_page( void *addr );
+uint32_t memory_pages_free();
+uint32_t memory_pages_total();
 
 #endif
